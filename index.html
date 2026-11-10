@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FrostLine — digital-студия</title>
+<style>
+  /* === ХОЛОДНАЯ ПАЛИТРА + ТЕМЫ === */
+  :root {
+    --bg: #0b1220;
+    --bg-soft: #111c30;
+    --card: #16233b;
+    --text: #e6eefc;
+    --muted: #8aa0c2;
+    --accent: #38bdf8;   /* ice blue */
+    --accent-2: #818cf8; /* indigo */
+    --teal: #2dd4bf;
+    --border: rgba(56,189,248,.18);
+    --shadow: 0 12px 40px rgba(0,20,60,.55);
+  }
+  [data-theme="light"] {
+    --bg: #eef3fb;
+    --bg-soft: #ffffff;
+    --card: #ffffff;
+    --text: #0b1220;
+    --muted: #4a5c78;
+    --accent: #0284c7;
+    --accent-2: #4f46e5;
+    --teal: #0d9488;
+    --border: rgba(2,132,199,.18);
+    --shadow: 0 12px 30px rgba(10,40,80,.12);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Segoe UI', system-ui, sans-serif;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(56,189,248,.18), transparent 60%),
+      radial-gradient(900px 500px at -10% 30%, rgba(129,140,248,.15), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    transition: background .4s, color .4s;
+    min-height:100vh;
+  }
+  a { color:var(--accent); text-decoration:none; }
+
+  /* === HEADER === */
+  header {
+    position:sticky; top:0; z-index:100;
+    backdrop-filter: blur(12px);
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
+    border-bottom:1px solid var(--border);
+  }
+  nav {
+    max-width:1100px; margin:0 auto; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .logo { font-weight:800; font-size:1.25rem; letter-spacing:.5px;
+    background:linear-gradient(90deg,var(--accent),var(--teal),var(--accent-2));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  nav ul { display:flex; gap:8px; list-style:none; align-items:center; }
+  nav .nav-link {
+    padding:8px 14px; border-radius:8px; color:var(--muted);
+    cursor:pointer; font-weight:600; font-size:.95rem;
+    transition:.25s; border:1px solid transparent; background:none;
+  }
+  nav .nav-link:hover { color:var(--text); border-color:var(--border); }
+  nav .nav-link.active { color:var(--text); background:color-mix(in srgb,var(--accent) 15%,transparent); border-color:var(--border); }
+  .theme-btn {
+    background:none; border:1px solid var(--border); color:var(--text);
+    width:40px; height:40px; border-radius:10px; cursor:pointer;
+    font-size:1.1rem; transition:.25s;
+  }
+  .theme-btn:hover { background:color-mix(in srgb,var(--accent) 15%,transparent); }
+  .burger { display:none; background:none; border:1px solid var(--border); color:var(--text);
+    width:40px; height:40px; border-radius:10px; font-size:1.2rem; cursor:pointer; }
+
+  /* === СТРАНИЦЫ (SPA) === */
+  .page { display:none; animation: fadeUp .5s ease both; }
+  .page.active { display:block; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(18px);} to {opacity:1; transform:none;} }
+
+  .container { max-width:1100px; margin:0 auto; padding:60px 20px; }
+
+  /* Hero */
+  .hero { text-align:center; padding:90px 20px 60px; }
+  .hero h1 {
+    font-size:clamp(2rem,5.5vw,3.6rem); line-height:1.15; margin-bottom:18px;
+    background:linear-gradient(120deg,var(--accent),var(--teal),var(--accent-2));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .hero p { color:var(--muted); font-size:1.15rem; max-width:600px; margin:0 auto 32px; }
+  .btn {
+    display:inline-block; padding:14px 34px; border-radius:10px; border:none; cursor:pointer;
+    font-weight:700; font-size:1rem; color:#03101f;
+    background:linear-gradient(90deg,var(--accent),var(--teal));
+    transition:transform .2s, box-shadow .2s;
+  }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(56,189,248,.4); }
+  .btn.ghost { background:none; color:var(--text); border:1px solid var(--border); }
+  .btn.ghost:hover { background:color-mix(in srgb,var(--accent) 12%,transparent); box-shadow:none; }
+
+  h2.title { font-size:clamp(1.6rem,3.5vw,2.4rem); margin-bottom:14px; text-align:center; }
+  .subtitle { color:var(--muted); text-align:center; margin-bottom:44px; }
+
+  /* Карточки */
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:22px; }
+  .card {
+    background:linear-gradient(160deg,var(--card), color-mix(in srgb,var(--card) 80%, var(--accent) 20%));
+    border:1px solid var(--border); border-radius:16px; padding:28px;
+    box-shadow:var(--shadow);
+    transition:transform .3s, box-shadow .3s, border-color .3s;
+  }
+  .card:hover { transform:translateY(-6px); border-color:var(--accent); box-shadow:0 20px 50px rgba(56,189,248,.22); }
+  .card .icon { font-size:2rem; margin-bottom:14px; display:block; }
+  .card h3 { margin-bottom:10px; color:var(--accent); }
+  .card p { color:var(--muted); font-size:.95rem; }
+  .price { font-size:1.6rem; font-weight:800; color:var(--teal); margin:12px 0; }
+
+  /* Анимация появления при скролле */
+  .reveal { opacity:0; transform:translateY(28px); transition:opacity .7s, transform .7s; }
+  .reveal.show { opacity:1; transform:none; }
+
+  /* Форма */
+  .contact-wrap { display:grid; grid-template-columns:1.1fr .9fr; gap:40px; align-items:start; }
+  form input, form textarea {
+    width:100%; padding:13px 16px; margin-bottom:14px; border-radius:10px;
+    background:var(--bg-soft); color:var(--text);
+    border:1px solid var(--border); font-family:inherit; font-size:1rem; outline:none;
+    transition:border .2s, box-shadow .2s;
+  }
+  form input:focus, form textarea:focus {
+    border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent);
+  }
+  .info-box { background:var(--bg-soft); border:1px solid var(--border); border-radius:16px; padding:26px; }
+  .info-box p { color:var(--muted); margin:10px 0; }
+  .info-box strong { color:var(--text); }
+  #msg { margin-top:10px; font-weight:600; min-height:22px; }
+  #msg.ok { color:var(--teal); }
+  #msg.err { color:#f87171; }
+
+  /* About */
+  .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; }
+  .stat { display:flex; gap:30px; flex-wrap:wrap; margin-top:24px; }
+  .stat div { }
+  .stat b { font-size:2rem; color:var(--accent); display:block; }
+  .stat span { color:var(--muted); font-size:.9rem; }
+
+  footer {
+    text-align:center; padding:34px 20px; color:var(--muted); font-size:.9rem;
+    border-top:1px solid var(--border);
+  }
+
+  @media(max-width:760px) {
+    nav ul {
+      display:none; position:absolute; top:100%; left:0; right:0;
+      flex-direction:column; background:var(--bg-soft); padding:16px;
+      border-bottom:1px solid var(--border); gap:6px;
+    }
+    nav ul.open { display:flex; }
+    .burger { display:block; }
+    .contact-wrap, .about-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">❄ FrostLine</div>
+    <ul id="menu">
+      <li><button class="nav-link active" data-page="home">Главная</button></li>
+      <li><button class="nav-link" data-page="about">О нас</button></li>
+      <li><button class="nav-link" data-page="services">Услуги</button></li>
+      <li><button class="nav-link" data-page="contact">Контакты</button></li>
+    </ul>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="theme-btn" id="themeBtn" title="Сменить тему">🌙</button>
+      <button class="burger" id="burger">☰</button>
+    </div>
+  </nav>
+</header>
+
+<!-- ================= ГЛАВНАЯ ================= -->
+<section class="page active" id="page-home">
+  <div class="hero">
+    <h1>Digital-студия холодного дизайна</h1>
+    <p>Создаём лендинги, которые продают. Быстро, адаптивно и со вкусом.</p>
+    <button class="btn" data-page="contact">Оставить заявку</button>
+    <button class="btn ghost" data-page="services" style="margin-left:10px;">Услуги</button>
+  </div>
+
+  <div class="container">
+    <h2 class="title reveal">Почему мы</h2>
+    <p class="subtitle reveal">Три причины, по которым клиенты выбирают нас</p>
+    <div class="grid">
+      <div class="card reveal"><span class="icon">⚡</span><h3>Скорость</h3><p>Лендинг под ключ за 5 дней. Никаких затянутых согласований.</p></div>
+      <div class="card reveal"><span class="icon">📱</span><h3>Адаптивность</h3><p>Идеально выглядит на любом устройстве — от смартфона до 4K.</p></div>
+      <div class="card reveal"><span class="icon">🎯</span><h3>Конверсия</h3><p>Продуманная структура и CTA, которые ведут к заявке.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= О НАС ================= -->
+<section class="page" id="page-about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <h2 class="title" style="text-align:left;">О нас</h2>
+        <p style="color:var(--muted);margin:16px 0;">FrostLine — команда дизайнеров и разработчиков, влюблённых в холодные оттенки и чистую типографику. Мы делаем сайты, которые не стыдно показать.</p>
+        <p style="color:var(--muted);">Работаем с 2020 года. Более 120 проектов, от лендингов до корпоративных порталов.</p>
+        <div class="stat">
+          <div><b>120+</b><span>проектов</span></div>
+          <div><b>6 лет</b><span>на рынке</span></div>
+          <div><b>98%</b><span>довольных клиентов</span></div>
+        </div>
+      </div>
+      <div class="info-box reveal">
+        <h3 style="color:var(--accent);margin-bottom:14px;">Наши принципы</h3>
+        <p>🧊 <strong>Холодный минимализм</strong> — ничего лишнего.</p>
+        <p>🚀 <strong>Скорость</strong> — код без раздутых библиотек.</p>
+        <p>🤝 <strong>Прозрачность</strong> — фиксированная смета и сроки.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= УСЛУГИ ================= -->
+<section class="page" id="page-services">
+  <div class="container">
+    <h2 class="title">Услуги</h2>
+    <p class="subtitle">Выберите подходящий пакет</p>
+    <div class="grid">
+      <div class="card reveal">
+        <span class="icon">💠</span><h3>Лендинг</h3>
+        <div class="price">от 30 000 ₽</div>
+        <p>Одностраничник с формой заявки. Срок — 5 дней.</p>
+      </div>
+      <div class="card reveal">
+        <span class="icon">🌐</span><h3>Многостраничный сайт</h3>
+        <div class="price">от 80 000 ₽</div>
+        <p>До 10 страниц, админка, SEO-база. Срок — 2–3 недели.</p>
+      </div>
+      <div class="card reveal">
+        <span class="icon">🎨</span><h3>Дизайн-система</h3>
+        <div class="price">от 50 000 ₽</div>
+        <p>UI-kit, типографика, палитра — для масштабирования.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= КОНТАКТЫ ================= -->
+<section class="page" id="page-contact">
+  <div class="container">
+    <h2 class="title">Контакты</h2>
+    <p class="subtitle">Оставьте заявку — ответим в течение часа</p>
+    <div class="contact-wrap">
+      <form id="form" novalidate>
+        <input type="text" name="name" placeholder="Ваше имя" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <textarea name="message" rows="5" placeholder="Опишите задачу" required></textarea>
+        <button type="submit" class="btn" style="width:100%;">Отправить</button>
+        <div id="msg"></div>
+      </form>
+      <div class="info-box">
+        <h3 style="color:var(--accent);margin-bottom:12px;">Как связаться</h3>
+        <p>📧 <strong>hello@frostline.ru</strong></p>
+        <p>📞 <strong>+7 969 281 8080</strong></p>
+        <p>🕓 Пн–Пт, 10:00–19:00</p>
+        <p style="margin-top:18px;font-size:.85rem;">Форма подключена к Formspree. Замените <code>action</code> на свой endpoint или используйте mailto-fallback (см. комментарий в коде).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 FrostLine. Все права защищены.</footer>
+
+<script>
+  /* === SPA-навигация === */
+  const pages = document.querySelectorAll('.page');
+  const links = document.querySelectorAll('[data-page]');
+  const menu = document.getElementById('menu');
+
+  function goTo(id) {
+    pages.forEach(p => p.classList.toggle('active', p.id === 'page-' + id));
+    document.querySelectorAll('.nav-link').forEach(l =>
+      l.classList.toggle('active', l.dataset.page === id));
+    menu.classList.remove('open');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // повторно запускаем reveal для новой страницы
+    setTimeout(observeReveals, 50);
+  }
+  links.forEach(el => el.addEventListener('click', () => goTo(el.dataset.page)));
+
+  /* === Мобильное меню === */
+  document.getElementById('burger').addEventListener('click', () => menu.classList.toggle('open'));
+
+  /* === Тёмная / светлая тема === */
+  const themeBtn = document.getElementById('themeBtn');
+  const saved = localStorage.getItem('theme') || 'dark';
+  document.documentElement.dataset.theme = saved;
+  themeBtn.textContent = saved === 'dark' ? '🌙' : '☀️';
+  themeBtn.addEventListener('click', () => {
+    const cur = document.documentElement.dataset.theme;
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('theme', next);
+    themeBtn.textContent = next === 'dark' ? '🌙' : '☀️';
+  });
+
+  /* === Анимация появления при скролле === */
+  let io;
+  function observeReveals() {
+    if (io) io.disconnect();
+    io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.page.active .reveal').forEach(el => {
+      el.classList.remove('show');
+      io.observe(el);
+    });
+  }
+  observeReveals();
+
+  /* === Форма === */
+  const form = document.getElementById('form');
+  const msg = document.getElementById('msg');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msg.textContent = ''; msg.className = '';
+
+    const data = new FormData(form);
+    const name = (data.get('name') || '').trim();
+    const email = (data.get('email') || '').trim();
+    const message = (data.get('message') || '').trim();
+
+    if (name.length < 2) return showErr('Введите имя (минимум 2 символа).');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showErr('Проверьте email.');
+    if (message.length < 10) return showErr('Сообщение слишком короткое.');
+
+    // 👉 ВАРИАНТ 1: Formspree (создайте форму на formspree.io и вставьте ID)
+    // const endpoint = 'https://formspree.io/f/ВАШ_ID';
+    // try {
+    //   const res = await fetch(endpoint, {
+    //     method:'POST',
+    //     headers:{'Accept':'application/json'},
+    //     body: data
+    //   });
+    //   if (!res.ok) throw new Error();
+    //   showOk('✅ Спасибо! Заявка отправлена.');
+    //   form.reset();
+    // } catch { showErr('Не удалось отправить. Попробуйте позже.'); }
+
+    // 👉 ВАРИАНТ 2: demo-режим (без сервера) + mailto-fallback
+    try {
+      // здесь можно заменить на отправку куда нужно
+      await new Promise(r => setTimeout(r, 700)); // имитация запроса
+      showOk('✅ Спасибо, ' + name + '! Заявка отправлена. Мы свяжемся с вами.');
+      form.reset();
+    } catch {
+      showErr('Ошибка отправки. Напишите нам на hello@frostline.ru');
+    }
+  });
+
+  function showOk(t){ msg.textContent=t; msg.className='ok'; }
+  function showErr(t){ msg.textContent=t; msg.className='err'; }
+</script>
+</body>
+</html>
